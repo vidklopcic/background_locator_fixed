@@ -61,6 +61,7 @@ class IsolateHolderService : MethodChannel.MethodCallHandler, LocationUpdateList
         }
     }
 
+    private var notificationDataInitialized = false
     private var notificationChannelName = "Flutter Locator Plugin"
     private var notificationTitle = "Start Location Tracking"
     private var notificationMsg = "Track location in background"
@@ -81,7 +82,9 @@ class IsolateHolderService : MethodChannel.MethodCallHandler, LocationUpdateList
     override fun onCreate() {
         super.onCreate()
         startLocatorService(this)
-        startForeground(notificationId, getNotification())
+        if (notificationDataInitialized) {
+            startForeground(notificationId, getNotification())
+        }
     }
 
     private fun start() {
@@ -102,6 +105,8 @@ class IsolateHolderService : MethodChannel.MethodCallHandler, LocationUpdateList
     }
 
     private fun getNotification(): Notification {
+        Log.e("IsolateHolderService", "getNotification $notificationTitle");
+        notificationDataInitialized = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Notification channel is available in Android O and up
             val channel = NotificationChannel(
